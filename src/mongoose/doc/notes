@@ -1,0 +1,21 @@
+--------------------------------------------------------------------------------
+Building on Windows
+
+Use MSYS2, there might be some changes required in the CMakeLists.txt,
+OS detection is an issue
+
+Fix up the source code as required.
+libmongoose.a will be compiled, renamed into libmongoosecpp
+create /mingw64/usr/include/mongoosecpp
+copy the headers
+copy libmongoosecpp.a to /mingw64/lib
+
+copy mongoose.pc to mongoosecpp.pc and modify to point to libmongoosecpp
+	instead of using 
+		-lmongoosecpp
+		-lws2_32
+		-lstdc++
+	(which is not portable)
+
+Thu, Aug 15, 2019 10:41:37 AM
+--------------------------------------------------------------------------------

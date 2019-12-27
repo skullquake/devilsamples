@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			json
+		</title>
+		<meta charset="UTF-8">
+		<link rel="icon" type="image/png" href="/favicon.ico">
+		<script
+			data-dojo-config="
+			async:1,
+			dojoBlankHtmlUrl:'/blank.html',
+			gfxRenderer:'svg,silverlight,vml',
+			packages:[
+				{
+					name: 'custom',
+					location:location.pathname.replace(/\/[^/]+$/,'')+'/js/custom'
+				},
+				{
+					name:'bootstrap',
+					location:'/lib/Dojo-Bootstrap'
+				}
+			]"
+			src="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js"
+		></script>
+	</head>
+	<body>
+		<script>
+			require(
+				[
+					"dojo/query",
+					"dojo/dom",
+					"dojo/request",
+					"dojo/json"
+				],
+				function(
+					query,
+					dom,
+					request,
+					json
+				){      
+					request.get(
+						"/gltf",
+						{
+							handleAs:"json"
+						}
+					).then(
+						function(sdat){
+							alert(JSON.stringify(sdat));
+						}
+					);
+				}
+			);
+
+		</script>
+	</body>
+</html>
+        
+    
+    
+
