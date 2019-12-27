@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			*{
+				background:#000000;
+			}
+		</style>
+	</head>
+	<body>
+		<img src="./a.jpg" id="img"></img>
+		<script>
+			setInterval(
+				function(){
+					var el=document.getElementById('img');
+					el.src='./a.jpg?cachebust='+(new Date().getTime());
+				},
+				1000
+			);
+		</script>
+	</body>
+</html>

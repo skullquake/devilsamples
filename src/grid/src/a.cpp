@@ -62,25 +62,28 @@ int main(int argc, char **argv){
 	int r;
 	int g;
 	int b;
-	for(int i=0;i<height;i+=stride){
-		for(int j=0;j<width;j++){
+	int r2;
+	int g2;
+	int b2;
+	for(int j=0;j<width;j++){
+		for(int i=0;i<height;i+=stride){
 			getpixel(&Image,j,i,r,g,b);
-			r=fmin(255,r*2);
-			g=fmin(255,g*2);
-			b=fmin(255,b*2);
+			r=fmax(0,fmin(255,(r*2)));
+			g=fmax(0,fmin(255,(g*2)));
+			b=fmax(0,fmin(255,(b*2)));
 			putpixel(&Image,j,i,r,g,b);
-		}
-	}
-	for(int j=0;j<width;j+=stride){
-		for(int i=0;i<height;i+=1){
-			getpixel(&Image,j,i,r,g,b);
-			r=fmin(255,r*2);
-			g=fmin(255,g*2);
-			b=fmin(255,b*2);
-			putpixel(&Image,j,i,r,g,b);
-		}
-	}
 
+		}
+	}
+	for(int i=0;i<height;i++){
+		for(int j=0;j<width;j+=stride){
+			getpixel(&Image,j,i,r,g,b);
+			r=fmax(0,fmin(255,(r*2)));
+			g=fmax(0,fmin(255,(g*2)));
+			b=fmax(0,fmin(255,(b*2)));
+			putpixel(&Image,j,i,r,g,b);
+		}
+	}
 	std::chrono::milliseconds t3=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 	//save
 	ilEnable(IL_FILE_OVERWRITE);
@@ -105,9 +108,11 @@ void putpixel(
 	ILuint bpp=Image->Bpp();
 	ILuint width=Image->Width();
 	ILuint height=Image->Height();
-	bytes[(y*width+x)*bpp+0]=r;
-	bytes[(y*width+x)*bpp+1]=g;
-	bytes[(y*width+x)*bpp+2]=b;
+	if(x<width&&y<height){
+		bytes[(y*width+x)*bpp+0]=r;
+		bytes[(y*width+x)*bpp+1]=g;
+		bytes[(y*width+x)*bpp+2]=b;
+	}
 }
 void getpixel(
 	ilImage* Image,
@@ -121,7 +126,9 @@ void getpixel(
 	ILuint bpp=Image->Bpp();
 	ILuint width=Image->Width();
 	ILuint height=Image->Height();
-	r=static_cast<ILubyte>(bytes[(y*width+x)*bpp+0]);
-	g=static_cast<ILubyte>(bytes[(y*width+x)*bpp+1]);
-	b=static_cast<ILubyte>(bytes[(y*width+x)*bpp+2]);
+	if(x<width&&y<height){
+		r=static_cast<ILubyte>(bytes[(y*width+x)*bpp+0]);
+		g=static_cast<ILubyte>(bytes[(y*width+x)*bpp+1]);
+		b=static_cast<ILubyte>(bytes[(y*width+x)*bpp+2]);
+	}
 }

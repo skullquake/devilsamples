@@ -53,4 +53,3 @@ run: $(BIN)
 	@$(BIN)\
 		../res/b.jpg\
 		../out/a.jpg
-	http-server ../out

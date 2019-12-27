@@ -2,6 +2,8 @@
 #include<iostream>
 #include<chrono>
 #include<math.h>
+void putpixel(ilImage*,int,int,int,int,int);
+void getpixel(ilImage*,int,int,int&,int&,int&);
 int main(int argc, char **argv){
 	std::cout<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()<<":start"<<std::endl;
 	if(argc<2){
@@ -54,42 +56,24 @@ int main(int argc, char **argv){
 		<<depth
 		<<std::endl
 	;
-	//iterate pixels
-	/*
-	for(int i=0;i<height;i++){
-	   for(int j=0;j<width;j++){
-	   	for(int k=0;k<bpp;k++){
-			if(k==0)std::cout<<"[";
-			std::cout<<static_cast<int>(bytes[(i*width+j)*bpp+k]);
-			if(k<bpp-1)std::cout<<",";
-			if(k==bpp-1)std::cout<<"]";
-		}
-		std::cout
-			<<std::endl
-		;
-	   }
-	}
-	*/
 	//write pixels
 	std::chrono::milliseconds t2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-	for(int i=0;i<height;i++){
-	   for(int j=0;j<width;j++){
-		//acquire
-		ILubyte r_in=static_cast<ILubyte>(bytes[(i*width+j)*bpp+0]);
-		ILubyte g_in=static_cast<ILubyte>(bytes[(i*width+j)*bpp+1]);
-		ILubyte b_in=static_cast<ILubyte>(bytes[(i*width+j)*bpp+2]);
-		//process
-		ILubyte r_out;
-		ILubyte g_out;
-		ILubyte b_out;
-		r_out=fmin(fmax(r_in,0),255);
-		g_out=fmin(fmax(r_in-g_in,0),255);
-		b_out=fmin(fmax(b_in,0),255);
-		//write
-		bytes[(i*width+j)*bpp+0]=r_out;
-		bytes[(i*width+j)*bpp+1]=g_out;
-		bytes[(i*width+j)*bpp+2]=b_out;
-	   }
+	int stride=32;
+	int r;
+	int g;
+	int b;
+	int r2;
+	int g2;
+	int b2;
+	for(int j=0;j<width;j++){
+		for(int i=0;i<height;i+=1){
+			getpixel(&Image,j,i,r,g,b);
+			getpixel(&Image,j+1,i,r2,g2,b2);
+			r=fmax(0,fmin(255,(r-r2)*32));
+			g=fmax(0,fmin(255,(g-g2)*32));
+			b=fmax(0,fmin(255,(b-b2)*32));
+			putpixel(&Image,j,i,r,g,b);
+		}
 	}
 	std::chrono::milliseconds t3=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 	//save
@@ -103,4 +87,39 @@ int main(int argc, char **argv){
 	std::cout<<"Save:    "<<(t5-t4).count()<<" ms"<<std::endl;;
 	return 0;
 }
-
+void putpixel(
+	ilImage* Image,
+	int x,
+	int y,
+	int r,
+	int g,
+	int b
+){
+	ILubyte* bytes=Image->GetData();
+	ILuint bpp=Image->Bpp();
+	ILuint width=Image->Width();
+	ILuint height=Image->Height();
+	if(x<width&&y<height){
+		bytes[(y*width+x)*bpp+0]=r;
+		bytes[(y*width+x)*bpp+1]=g;
+		bytes[(y*width+x)*bpp+2]=b;
+	}
+}
+void getpixel(
+	ilImage* Image,
+	int x,
+	int y,
+	int &r,
+	int &g,
+	int &b
+){
+	ILubyte* bytes=Image->GetData();
+	ILuint bpp=Image->Bpp();
+	ILuint width=Image->Width();
+	ILuint height=Image->Height();
+	if(x<width&&y<height){
+		r=static_cast<ILubyte>(bytes[(y*width+x)*bpp+0]);
+		g=static_cast<ILubyte>(bytes[(y*width+x)*bpp+1]);
+		b=static_cast<ILubyte>(bytes[(y*width+x)*bpp+2]);
+	}
+}
