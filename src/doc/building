@@ -1,0 +1,13 @@
+grab
+devil 1.8
+	mkdir ./build
+	cd ./build
+	cmake ../ -DCMAKE_INSTALL_PREFIX:PATH=/usr
+	make -j8
+	make install
+note install does not seem to copy the hpp wrapper for c++ work with this lib
+copy it manually
+
+no alterations were necessary for termux
+
+Fri Dec 27 00:28:38 SAST 2019
